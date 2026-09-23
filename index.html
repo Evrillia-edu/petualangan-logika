@@ -8,6 +8,7 @@
 :root{
   --bg:#fef6e4; --card:#fff; --primary:#6c5ce7; --primary2:#a29bfe;
   --accent:#00b894; --warn:#fd79a8; --text:#2d3436; --grid:#dfe6e9;
+  --cell-size:clamp(34px, 11vw, 38px);
   padding-top: env(safe-area-inset-top,0px);
   padding-bottom: env(safe-area-inset-bottom,0px);
 }
@@ -19,26 +20,26 @@
 :root[data-theme="dark"]{ --bg:#1e1b2e; --card:#2a2640; --text:#f1f1f1; --grid:#3a3556; }
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--text);font-family:'Comic Sans MS',Verdana,sans-serif;min-height:100%;padding:16px}
-h1{text-align:center;font-size:1.5rem;color:var(--primary);margin:4px 0}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Comic Sans MS',Verdana,sans-serif;min-height:100%;padding:clamp(10px, 4vw, 16px);overflow-x:hidden}
+h1{text-align:center;font-size:clamp(1.25rem, 6vw, 1.5rem);color:var(--primary);margin:4px 0}
 .sub{text-align:center;opacity:.8;margin-bottom:12px;font-size:.9rem}
 .wrap{max-width:520px;margin:0 auto}
-.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-#maze{display:grid;gap:3px;margin:0 auto;width:fit-content}
-.cell{width:38px;height:38px;background:var(--grid);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative}
+.card{background:var(--card);border-radius:16px;padding:clamp(10px, 3vw, 14px);margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+#maze{display:grid;gap:3px;margin:0 auto;width:fit-content;max-width:100%}
+.cell{width:var(--cell-size);height:var(--cell-size);background:var(--grid);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:clamp(17px, 6vw, 20px);position:relative}
 .wall{background:#636e72}
 .goal{background:#ffeaa7}
 .player{transition:transform .25s}
-.palette{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
-button.cmd{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-size:1rem;cursor:pointer;font-family:inherit}
+.palette{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}
+button.cmd{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:10px 8px;min-height:44px;font-size:1rem;cursor:pointer;font-family:inherit}
 button.cmd.loop{background:var(--accent)}
 button.cmd:active{transform:scale(.95)}
-#seq{min-height:50px;background:var(--grid);border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
+#seq{min-height:50px;background:var(--grid);border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;overflow-wrap:anywhere}
 .tok{background:var(--primary2);color:#fff;border-radius:8px;padding:6px 10px;font-size:.95rem;display:flex;align-items:center;gap:4px}
 .tok .x{cursor:pointer;font-weight:bold;opacity:.8}
 .loopwrap{background:#00b89433;border:2px dashed var(--accent);border-radius:10px;padding:4px 6px;display:flex;gap:4px;align-items:center}
 .actions{display:flex;gap:10px;justify-content:center;margin-top:10px}
-button.big{background:var(--warn);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:1.05rem;cursor:pointer;font-family:inherit}
+button.big{background:var(--warn);color:#fff;border:none;border-radius:12px;padding:12px 16px;min-height:48px;flex:1;font-size:1.05rem;cursor:pointer;font-family:inherit}
 button.big.run{background:var(--accent)}
 button.big.clear{background:#b2bec3}
 #msg{text-align:center;font-weight:bold;min-height:1.4em;margin-top:8px}
@@ -49,11 +50,15 @@ button.big.clear{background:#b2bec3}
 .lvlbtn.done{background:var(--accent);color:#fff}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
 .overlay.hidden{display:none}
-.modal{background:var(--card);border-radius:16px;padding:20px;max-width:380px;text-align:center}
+.modal{background:var(--card);border-radius:16px;padding:20px;width:min(100%,380px);text-align:center}
 .modal .big-emoji{font-size:2.6rem}
 .modal p{line-height:1.5;font-size:1rem}
 .modal .picks{display:flex;gap:8px;justify-content:center;margin-top:12px}
 .modal .pick{width:44px;height:44px;border-radius:50%;border:none;background:var(--primary);color:#fff;font-weight:bold;font-size:1.1rem;cursor:pointer}
+@media (max-width:360px){
+  .actions{flex-direction:column}
+  .modal{padding:16px}
+}
 </style>
 </head>
 <body>
@@ -136,7 +141,7 @@ function renderLevelButtons(){
 
 function renderMaze(playerPos, playerDir){
   const lvl = LEVELS[curLevel];
-  mazeEl.style.gridTemplateColumns = `repeat(${lvl.w}, 38px)`;
+  mazeEl.style.gridTemplateColumns = `repeat(${lvl.w}, var(--cell-size))`;
   mazeEl.innerHTML = '';
   const p = playerPos || lvl.start;
   const dir = playerDir !== undefined ? playerDir : lvl.start.dir;
